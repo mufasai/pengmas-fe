@@ -35,4 +35,16 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Backend API
+    |--------------------------------------------------------------------------
+    | URL base dari backend Laravel API.
+    | Set API_BASE_URL di .env untuk development lokal atau production.
+    |
+    */
+    'api' => [
+        'base_url' => env('API_BASE_URL', 'http://127.0.0.1:8000'),
+    ],
+
 ];

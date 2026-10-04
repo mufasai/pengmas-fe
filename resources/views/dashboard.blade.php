@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <title>Dashboard Kasir</title>
@@ -217,105 +218,102 @@
         }
     </style>
 </head>
+
 <body>
 
-<div class="layout">
+    <div class="layout">
 
-    <aside class="sidebar">
-        <div>
-            <div class="brand">Van Houtte</div>
-
-            <nav class="menu">
-    <a href="{{ url('/dashboard') }}" class="{{ request()->is('dashboard') ? 'active' : '' }}">
-        ▦ Dashboard
-    </a>
-
-    <a href="{{ url('/transaksi') }}" class="{{ request()->is('transaksi') ? 'active' : '' }}">
-        ▤ Transaksi
-    </a>
-
-    <a href="{{ url('/menu') }}" class="{{ request()->is('menu') ? 'active' : '' }}">
-        ⚒ Menu
-    </a>
-
-    <a href="{{ url('/laporan') }}" class="{{ request()->is('laporan') ? 'active' : '' }}">
-        ▣ Laporan
-    </a>
-</nav>
-        </div>
-
-        <div class="admin-box">
-            <div class="admin-icon">☻</div>
-            <div class="admin-text">
-                <strong>Admin Kasir</strong>
-                <span>Van Houtte Cafe</span>
-            </div>
-        </div>
-    </aside>
-
-    <main class="main">
-
-        <div class="topbar">
+        <aside class="sidebar">
             <div>
-                Senin, 24 Mei 2024<br>
-                <strong>10.38.18</strong>
+                <div class="brand">Cakrawala</div>
+
+                <nav class="menu">
+                    <a href="{{ url('/dashboard') }}" class="{{ request()->is('dashboard') ? 'active' : '' }}">
+                        ▦ Dashboard
+                    </a>
+
+                    <a href="{{ url('/transaksi') }}" class="{{ request()->is('transaksi') ? 'active' : '' }}">
+                        ▤ Transaksi
+                    </a>
+
+                    <a href="{{ url('/menu') }}" class="{{ request()->is('menu') ? 'active' : '' }}">
+                        ⚒ Menu
+                    </a>
+
+                    <a href="{{ url('/laporan') }}" class="{{ request()->is('laporan') ? 'active' : '' }}">
+                        ▣ Laporan
+                    </a>
+                </nav>
             </div>
-            <div class="avatar"></div>
-        </div>
 
-        <div class="cards">
-            <div class="card">
-                <span class="target">Target: 200</span>
-                <div class="card-icon">▤</div>
-                <div class="card-title">Jumlah Transaksi</div>
-                <div class="number">142</div>
-                <div class="note">Rata-rata: 12 transaksi / jam</div>
-            </div>
-
-            <div class="card">
-                <div class="card-icon">▣</div>
-                <div class="card-title">Rata-rata Struk</div>
-                <div class="number">Rp 29.930</div>
-                <div class="note">ⓘ Berdasarkan 142 transaksi hari ini</div>
-            </div>
-        </div>
-
-        <div class="report-card">
-            <h3>Produk Terlaris</h3>
-
-            <div class="product">
-                <img src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=100" alt="">
-                <div>
-                    <strong>Van Houtte Signature Latte</strong>
-                    <span>42 Terjual</span>
+            <div class="admin-box">
+                <div class="admin-icon">☻</div>
+                <div class="admin-text">
+                    <strong>{{ session('user')['name'] ?? 'Admin' }}</strong>
+                    <span>{{ session('user')['email'] ?? 'Van Houtte Cafe' }}</span>
                 </div>
-                <div class="price">Rp 1.470k</div>
+                <form action="/logout" method="POST" style="margin-left:auto">
+                    @csrf
+                    <button type="submit" style="background:none;border:none;cursor:pointer;color:#777;font-size:18px;"
+                        title="Logout">⏻</button>
+                </form>
             </div>
+        </aside>
 
-            <div class="product">
-                <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=100" alt="">
+        <main class="main">
+
+            <div class="topbar">
                 <div>
-                    <strong>Caramel Macchiato Ice</strong>
-                    <span>38 Terjual</span>
+                    {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}<br>
+                    <strong>{{ \Carbon\Carbon::now()->format('H.i.s') }}</strong>
                 </div>
-                <div class="price">Rp 1.330k</div>
+                <div class="avatar"></div>
             </div>
 
-            <div class="product">
-                <img src="https://images.unsplash.com/photo-1549903072-7e6e0bedb7fb?w=100" alt="">
-                <div>
-                    <strong>Almond Croissant</strong>
-                    <span>25 Terjual</span>
+            <div class="cards">
+                <div class="card">
+                    <span class="target">Target: {{ $dashboardData['transactions']['target'] ?? 200 }}</span>
+                    <div class="card-icon">▤</div>
+                    <div class="card-title">Jumlah Transaksi</div>
+                    <div class="number">{{ $dashboardData['transactions']['total'] ?? 0 }}</div>
+                    <div class="note">Pencapaian: {{ $dashboardData['transactions']['percentage'] ?? 0 }}%</div>
                 </div>
-                <div class="price">Rp 875k</div>
+
+                <div class="card">
+                    <div class="card-icon">▣</div>
+                    <div class="card-title">Rata-rata Struk</div>
+                    <div class="number">Rp {{ number_format($dashboardData['average_receipt'] ?? 0, 0, ',', '.') }}
+                    </div>
+                    <div class="note">ⓘ Berdasarkan {{ $dashboardData['transactions']['total'] ?? 0 }} transaksi hari
+                        ini</div>
+                </div>
             </div>
 
-            <a href="#" class="btn-report">Lihat Laporan Lengkap</a>
-        </div>
+            <div class="report-card">
+                <h3>Produk Terlaris</h3>
 
-    </main>
+                @if(isset($dashboardData['top_products']) && count($dashboardData['top_products']) > 0)
+                    @foreach($dashboardData['top_products'] as $product)
+                        <div class="product">
+                            <img src="{{ $product['image_url'] ?? 'https://via.placeholder.com/100' }}" alt="">
+                            <div>
+                                <strong>{{ $product['name'] }}</strong>
+                                <span>{{ $product['total_sold'] }} Terjual</span>
+                            </div>
+                            <div class="price">Rp {{ number_format($product['total_revenue'], 0, ',', '.') }}</div>
+                        </div>
+                    @endforeach
+                @else
+                    <p>Belum ada data penjualan.</p>
+                @endif
 
-</div>
+                <a href="{{ url('/laporan') }}" class="btn-report">Lihat Laporan Lengkap</a>
+            </div>
+
+        </main>
+
+    </div>
 
 </body>
+
 </html>

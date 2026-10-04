@@ -4,27 +4,36 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use App\Http\Controllers\AuthController;
+
+Route::get('/', function () {
+    return session()->has('api_token')
+        ? redirect('/dashboard')
+        : redirect('/login');
+});
+
 // halaman login
-Route::get('/login', function () {
-    return view('login');
-})->name('login');
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// proses login
-Route::post('/login', function (Request $request) {
+use App\Http\Controllers\DashboardController;
 
-    $credentials = $request->only('email', 'password');
+// halaman yang diproteksi API auth
+Route::middleware('api.auth')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index']);
 
-    if (Auth::attempt($credentials)) {
-        $request->session()->regenerate();
-        return redirect('/dashboard');
-    }
+    Route::get('/transaksi', [\App\Http\Controllers\TransactionController::class, 'index']);
+    Route::post('/transaksi', [\App\Http\Controllers\TransactionController::class, 'store']);
 
-    return back()->with('error', 'Email atau password salah!');
-}); 
+    Route::get('/menu', [\App\Http\Controllers\MenuController::class, 'index']);
+    Route::post('/menu', [\App\Http\Controllers\MenuController::class, 'store']);
+    Route::put('/menu/{id}', [\App\Http\Controllers\MenuController::class, 'update']);
+    Route::delete('/menu/{id}', [\App\Http\Controllers\MenuController::class, 'destroy']);
 
-Route::get('/dashboard', function () {
-    return "Selamat datang di dashboard kasir!";
-})->middleware('auth'); 
+    Route::get('/laporan', [\App\Http\Controllers\ReportController::class, 'index']);
+    Route::post('/laporan/send-receipt', [\App\Http\Controllers\ReportController::class, 'sendReceipt']);
+});
 
 Route::get('/forgot-password', function () {
     return view('auth.forgot-password');
@@ -37,19 +46,3 @@ Route::post('/forgot-password', function (Request $request) {
 
     return back()->with('status', 'Link pemulihan kata sandi berhasil dikirim ke email Anda.');
 })->name('password.email');
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware('auth');
-
-Route::get('/transaksi', function () {
-    return view('transaksi');
-})->middleware('auth');
-
-Route::get('/menu', function () {
-    return view('menu');
-})->middleware('auth');
-
-Route::get('/laporan', function () {
-    return view('laporan');
-})->middleware('auth');

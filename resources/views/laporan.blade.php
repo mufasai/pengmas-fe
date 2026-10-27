@@ -3,7 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Laporan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Penjualan - Cakrawala Eatery & Cafe</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
         * {
@@ -19,67 +21,31 @@
 
         .layout {
             display: flex;
-            min-height: 100vh
+            min-height: 100vh;
+            width: 100%;
         }
 
-        .sidebar {
-            width: 220px;
-            background: #eef3ff;
-            border-right: 1px solid #d6ddeb;
+        .main-wrapper {
+            flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: space-between
-        }
-
-        .brand {
-            padding: 28px 24px;
-            font-size: 26px;
-            font-weight: 700;
-            color: #002b78
-        }
-
-        .menu a {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            padding: 12px 24px;
-            text-decoration: none;
-            color: #1f2f46;
-            font-size: 14px
-        }
-
-        .menu a.active {
-            background: #dce7fb;
-            color: #002b78;
-            border-radius: 0 22px 22px 0;
-            font-weight: 700
-        }
-
-        .admin-box {
-            border-top: 1px solid #d6ddeb;
-            padding: 20px 24px;
-            display: flex;
-            gap: 12px;
-            align-items: center
-        }
-
-        .admin-icon {
-            width: 34px;
-            height: 34px;
-            background: #002b78;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center
+            min-width: 0;
+            background: #f8fafc;
         }
 
         .content {
             flex: 1;
-            padding: 34px 28px;
+            padding: 30px;
             display: grid;
             grid-template-columns: 370px 1fr;
-            gap: 18px
+            gap: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .content {
+                grid-template-columns: 1fr;
+                padding: 16px;
+            }
         }
 
         .search {
@@ -283,34 +249,12 @@
 <body>
 
     <div class="layout">
+        @include('layouts.sidebar')
 
-        <aside class="sidebar">
-            <div>
-                <div class="brand">Cakrawala</div>
+        <div class="main-wrapper">
+            @include('layouts.header')
 
-                <nav class="menu">
-                    <a href="/dashboard">▦ Dashboard</a>
-                    <a href="/transaksi">▤ Transaksi</a>
-                    <a href="/menu">⚒ Menu</a>
-                    <a href="/laporan" class="active">▣ Laporan</a>
-                </nav>
-            </div>
-
-            <div class="admin-box">
-                <div class="admin-icon">☻</div>
-                <div>
-                    <strong style="font-size:12px;">{{ session('user')['name'] ?? 'Admin' }}</strong><br>
-                    <span style="font-size:11px;color:#777;">{{ session('user')['email'] ?? 'Van Houtte Cafe' }}</span>
-                </div>
-                <form action="/logout" method="POST" style="margin-left:auto">
-                    @csrf
-                    <button type="submit" style="background:none;border:none;cursor:pointer;color:#777;font-size:18px;"
-                        title="Logout">⏻</button>
-                </form>
-            </div>
-        </aside>
-
-        <main class="content">
+            <main class="content">
 
             <section>
                 <input class="search" placeholder="🔍 Cari ID Transaksi atau Nama...">
@@ -406,7 +350,7 @@
             </section>
 
         </main>
-
+        </div>
     </div>
 
     <script>

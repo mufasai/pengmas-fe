@@ -3,7 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Menu</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Menu - Cakrawala Eatery & Cafe</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
         * {
@@ -20,70 +22,29 @@
         .layout {
             display: flex;
             min-height: 100vh;
+            width: 100%;
         }
 
-        .sidebar {
-            width: 220px;
-            background: #eef3ff;
-            border-right: 1px solid #d6ddeb;
+        .main-wrapper {
+            flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .brand {
-            padding: 28px 24px;
-            font-size: 26px;
-            font-weight: 700;
-            color: #002b78;
-        }
-
-        .menu-sidebar a {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 24px;
-            color: #1f2f46;
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        .menu-sidebar a.active {
-            background: #dce7fb;
-            color: #002b78;
-            border-radius: 0 22px 22px 0;
-            font-weight: 600;
-        }
-
-        .admin-box {
-            border-top: 1px solid #d6ddeb;
-            padding: 20px 24px;
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .admin-icon {
-            width: 34px;
-            height: 34px;
-            background: #002b78;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            min-width: 0;
+            background: #f8fafc;
         }
 
         .content {
             flex: 1;
-            padding: 56px 45px;
+            padding: 32px 36px;
+            max-width: 1000px;
+            width: 100%;
         }
 
         .form-area {
             display: grid;
             grid-template-columns: 320px 1fr;
             gap: 24px;
-            max-width: 900px;
+            max-width: 100%;
         }
 
         .card {
@@ -335,40 +296,39 @@
             cursor: pointer;
             font-size: 11px;
         }
+        @media (max-width: 900px) {
+            .content {
+                padding: 16px;
+            }
+            .form-area {
+                grid-template-columns: 1fr;
+            }
+            .actions {
+                justify-content: stretch;
+            }
+            .btn-cancel, .btn-save {
+                flex: 1;
+            }
+            .table-responsive {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .menu-table {
+                min-width: 600px;
+            }
+        }
     </style>
 </head>
 
 <body>
 
     <div class="layout">
+        @include('layouts.sidebar')
 
-        <aside class="sidebar">
-            <div>
-                <div class="brand">Cakrawala</div>
+        <div class="main-wrapper">
+            @include('layouts.header')
 
-                <nav class="menu-sidebar">
-                    <a href="/dashboard">▦ Dashboard</a>
-                    <a href="/transaksi">▤ Transaksi</a>
-                    <a href="/menu" class="active">⚒ Menu</a>
-                    <a href="/laporan">▣ Laporan</a>
-                </nav>
-            </div>
-
-            <div class="admin-box">
-                <div class="admin-icon">☻</div>
-                <div>
-                    <strong style="font-size:12px;">{{ session('user')['name'] ?? 'Admin' }}</strong><br>
-                    <span style="font-size:11px;color:#777;">{{ session('user')['email'] ?? 'Van Houtte Cafe' }}</span>
-                </div>
-                <form action="/logout" method="POST" style="margin-left:auto">
-                    @csrf
-                    <button type="submit" style="background:none;border:none;cursor:pointer;color:#777;font-size:18px;"
-                        title="Logout">⏻</button>
-                </form>
-            </div>
-        </aside>
-
-        <main class="content">
+            <main class="content">
 
             @if(session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
@@ -461,6 +421,7 @@
 
             <div class="menu-list">
                 <h3>Daftar Menu</h3>
+                <div class="table-responsive">
                 <table class="menu-table">
                     <thead>
                         <tr>
@@ -504,10 +465,11 @@
                         @endforelse
                     </tbody>
                 </table>
+                </div>
             </div>
 
         </main>
-
+        </div>
     </div>
 
     <script>

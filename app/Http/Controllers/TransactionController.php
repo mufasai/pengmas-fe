@@ -45,4 +45,25 @@ class TransactionController extends Controller
             'message' => $response->json('message') ?? 'Gagal membuat transaksi'
         ], $response->status());
     }
+
+    public function history(Request $request)
+    {
+        $token = session('api_token');
+        $baseUrl = config('services.api.base_url');
+
+        $params = $request->only(['search', 'start_date', 'end_date', 'payment_method', 'page']);
+
+        $response = Http::withToken($token)->get("{$baseUrl}/api/v1/transactions", $params);
+        $data = $response->successful() ? $response->json() : [];
+
+        $summary = $data['summary'] ?? [
+            'total_transactions' => 0,
+            'today_income' => 0,
+            'cash_count' => 0,
+            'qris_count' => 0,
+        ];
+        $transactions = $data['data'] ?? [];
+
+        return view('riwayat-transaksi', compact('transactions', 'summary', 'params'));
+    }
 }

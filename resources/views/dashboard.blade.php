@@ -3,7 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard Kasir</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Cakrawala Eatery & Cafe</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
         * {
@@ -20,68 +22,15 @@
         .layout {
             display: flex;
             min-height: 100vh;
+            width: 100%;
         }
 
-        .sidebar {
-            width: 220px;
-            background: #eef3ff;
-            border-right: 1px solid #d6ddeb;
+        .main-wrapper {
+            flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .brand {
-            padding: 28px 24px;
-            font-size: 26px;
-            font-weight: 700;
-            color: #002b78;
-        }
-
-        .menu a {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 24px;
-            color: #1f2f46;
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        .menu a.active {
-            background: #dce7fb;
-            color: #002b78;
-            border-radius: 0 22px 22px 0;
-            font-weight: 600;
-        }
-
-        .admin-box {
-            border-top: 1px solid #d6ddeb;
-            padding: 20px 24px;
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .admin-icon {
-            width: 34px;
-            height: 34px;
-            background: #002b78;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .admin-text strong {
-            font-size: 12px;
-            display: block;
-        }
-
-        .admin-text span {
-            font-size: 11px;
-            color: #777;
+            min-width: 0;
+            background: #f8fafc;
         }
 
         .main {
@@ -216,59 +165,28 @@
             font-size: 12px;
             margin-top: 26px;
         }
+
+        @media (max-width: 768px) {
+            .main {
+                padding: 16px;
+            }
+            .cards {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+        }
     </style>
 </head>
 
 <body>
 
     <div class="layout">
+        @include('layouts.sidebar')
 
-        <aside class="sidebar">
-            <div>
-                <div class="brand">Cakrawala</div>
+        <div class="main-wrapper">
+            @include('layouts.header')
 
-                <nav class="menu">
-                    <a href="{{ url('/dashboard') }}" class="{{ request()->is('dashboard') ? 'active' : '' }}">
-                        ▦ Dashboard
-                    </a>
-
-                    <a href="{{ url('/transaksi') }}" class="{{ request()->is('transaksi') ? 'active' : '' }}">
-                        ▤ Transaksi
-                    </a>
-
-                    <a href="{{ url('/menu') }}" class="{{ request()->is('menu') ? 'active' : '' }}">
-                        ⚒ Menu
-                    </a>
-
-                    <a href="{{ url('/laporan') }}" class="{{ request()->is('laporan') ? 'active' : '' }}">
-                        ▣ Laporan
-                    </a>
-                </nav>
-            </div>
-
-            <div class="admin-box">
-                <div class="admin-icon">☻</div>
-                <div class="admin-text">
-                    <strong>{{ session('user')['name'] ?? 'Admin' }}</strong>
-                    <span>{{ session('user')['email'] ?? 'Van Houtte Cafe' }}</span>
-                </div>
-                <form action="/logout" method="POST" style="margin-left:auto">
-                    @csrf
-                    <button type="submit" style="background:none;border:none;cursor:pointer;color:#777;font-size:18px;"
-                        title="Logout">⏻</button>
-                </form>
-            </div>
-        </aside>
-
-        <main class="main">
-
-            <div class="topbar">
-                <div>
-                    {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}<br>
-                    <strong>{{ \Carbon\Carbon::now()->format('H.i.s') }}</strong>
-                </div>
-                <div class="avatar"></div>
-            </div>
+            <main class="main">
 
             <div class="cards">
                 <div class="card">
@@ -310,8 +228,8 @@
                 <a href="{{ url('/laporan') }}" class="btn-report">Lihat Laporan Lengkap</a>
             </div>
 
-        </main>
-
+            </main>
+        </div>
     </div>
 
 </body>

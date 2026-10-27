@@ -15,14 +15,14 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
+            'login' => 'required|string',
             'password' => 'required',
         ]);
 
         $baseUrl = config('services.api.base_url');
 
         $response = Http::post("{$baseUrl}/api/v1/login", [
-            'login' => $request->email,
+            'login' => $request->login,
             'password' => $request->password,
         ]);
 
@@ -35,13 +35,18 @@ class AuthController extends Controller
                 if (isset($data['user'])) {
                     session(['user' => $data['user']]);
                 }
+
+                $role = $data['user']['role'] ?? 'kasir';
+                if ($role === 'kasir') {
+                    return redirect()->intended('/transaksi');
+                }
                 return redirect()->intended('/dashboard');
             }
         }
 
         return back()
-            ->with('error', $response->json('message') ?? 'Email atau password salah!')
-            ->withInput($request->only('email'));
+            ->with('error', $response->json('message') ?? 'Username atau password salah!')
+            ->withInput($request->only('login'));
     }
 
     public function logout()
